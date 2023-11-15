@@ -1,0 +1,13 @@
+.wrapper{
+  width: 100%; /* Занимает всю доступную ширину */
+  margin: 0 auto; /* Центрирование по горизонтали */
+  padding: 80px 118px 0; 
+  
+}
+.container {
+  display: flex;
+  flex-direction: column; 
+  max-width: 1060px;
+  box-sizing: border-box;
+  margin: 100px auto;
+}

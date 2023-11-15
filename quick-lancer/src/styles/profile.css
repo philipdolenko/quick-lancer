@@ -1,0 +1,176 @@
+.avatar-container {
+  position: relative;
+  display: inline-block;
+  margin-right: 20px;
+}
+
+.avatar-image {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  cursor: pointer;
+  max-width: 173px;
+  max-height: 173px;
+  min-width: 173px; /* Добавляем минимальную ширину */
+  min-height: 173px; /* Добавляем минимальную высоту */
+  background: #fbfbfb;
+}
+
+.avatar-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  min-width: 100%; /* Добавляем минимальную ширину */
+  min-height: 100%; /* Добавляем минимальную высоту */
+}
+
+.delete-avatar {
+  position: absolute;
+  bottom: 10px; /* Располагаем чуть выше нижнего края */
+  right: 65px; /* Располагаем чуть левее правого края */
+  width: 35px; /* Задайте желаемую ширину */
+  height: 35px; /* Задайте желаемую высоту */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  color: #fff; /* Красный цвет для креста */
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-weight: 900;
+}
+
+.avatar-image:hover .delete-avatar {
+  opacity: 1;
+}
+
+.delete-avatar:hover {
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.7
+  ); /* Полупрозрачный белый цвет при наведении на крест */
+  border: 1px solid #ccc; /* Добавим обводку, чтобы было видно, что это круг */
+}
+.profile-container {
+  display: flex;
+  flex-direction: column;
+}
+.profile-info {
+  display: flex;
+  border-radius: 13px;
+  border: 1px solid #000;
+  background-color: #fbfbfb;
+  padding: 20px 40px;
+  margin-bottom: 130px;
+}
+.profile-about-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin-right: 20px;
+}
+.link-field-background {
+  width: 100%;
+  padding: 15px 50px;
+  border-radius: 13px;
+  border: 1px solid #000;
+  background: #fbfbfb;
+  margin: 0 auto 25px;
+}
+.link-field {
+  max-height: 34px;
+  width: 100%;
+  padding: 20px;
+  flex-shrink: 0;
+  border: 1px solid #000;
+  background: #fff;
+
+  color: #000;
+  font-family: sans-serif;
+  font-size: 30px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.username-profile-about-info-background {
+  margin-bottom: 10px;
+}
+.username-profile-info {
+  width: 100%;
+  height: 54px;
+  border: 1px solid #000;
+  background: #fff;
+  color: #000;
+  font-family: sans-serif;
+  font-size: 30px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  padding: 15px;
+}
+.description-profile-about-info-background {
+  flex: 1;
+}
+.description-profile-info {
+  width: 100%;
+  height: 100%;
+  border: 1px solid #000;
+  background: #fff;
+  color: #000;
+  font-family: sans-serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  padding: 10px;
+}
+.price-per-hour {
+  display: flex;
+  align-items: center;
+}
+.hour-info {
+  color: #000;
+  font-family: sans-serif;
+  font-size: 25px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+.dollar-sign {
+  color: #0caa00;
+  font-family: sans-serif;
+  font-size: 25px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+.price-per-hour-info-background {
+  border: 1px solid #000;
+  background: #fff;
+  width: 57px;
+  height: 37px;
+  margin-right:7px;
+}
+.price-per-hour-info {
+  width: 100%;
+  text-align: center;
+  color: #0caa00;
+  font-family: sans-serif;
+  font-size: 30px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+.profile-taginput .tag-input-container{
+  margin: 0;
+}
+.profile-taginput .selected-tag-container{
+  margin-bottom: 10px;
+}

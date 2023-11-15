@@ -1,0 +1,67 @@
+/* styles/loginform.css */
+
+.login-form-container {
+  width: 100%;
+  
+}
+
+.form-group {
+  margin-bottom: 30px;
+}
+
+.login-form-input {
+  width: 100%;
+  padding: 20px 0 20px 40px;
+  /* box-sizing: border-box; */
+  border: 1px solid #000;
+  border-radius: 10px;
+  font: 700 25px sans-serif;
+  background: linear-gradient(0deg, #fbfbfb 0%, #fbfbfb 100%),
+    linear-gradient(0deg, #fbfbfb 0%, #fbfbfb 100%), #fbfbfb;
+}
+.login-form-input::placeholder{
+  color: #ACACAC;
+}
+
+.form-actions {
+  display: flex;
+  flex-direction: column;
+}
+.button-group{
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  margin-bottom: 30px
+}
+
+
+button {
+  padding: 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font: 700 25px sans-serif;
+  color: #000;
+  border: 1px solid #000;
+  background: linear-gradient(0deg, #fff 0%, #fff 100%),
+    linear-gradient(0deg, #fff 0%, #fff 100%), #fff;
+}
+
+.sign-in-with-google-button {
+  width: 100%;
+  min-height: 70px; 
+  background-image: url('../images/google.png');
+  background-size: 300px 25px; 
+  background-position: center; 
+  background-repeat: no-repeat;
+}
+.sign-in-button,
+.sign-up-button {
+  width: 50%; /* Ширина кнопки на всю ширину контейнера */
+}
+
+.sign-in-button:hover,
+.sign-up-button:hover {
+  background: linear-gradient(0deg, #0caa00 0%, #0caa00 100%),
+    linear-gradient(0deg, #fff 0%, #fff 100%), #fff; /* Зеленый фон при наведении и нажатии */
+  color: #fff; /* Белый текст при наведении и нажатии */
+}
