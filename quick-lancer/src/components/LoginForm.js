@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../firebase';
+import { auth, googleAuthProvider } from '../firebase';
 
 import '../styles/loginform.css';
+import { signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword} from 'firebase/auth';
 
 const generateUniqueId = () => {
   // Вам нужно реализовать эту функцию, используя, например, библиотеку uuid.
@@ -14,12 +15,7 @@ const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  console.log(auth);
-
   const [user, setUser] = useState('')
-
-
-  console.log(user);
 
   const navigate = useNavigate();
 
@@ -31,36 +27,26 @@ const LoginForm = () => {
     setPassword(e.target.value);
   };
 
-  const handleSignIn = () => {
-    const users = JSON.parse(localStorage.getItem('users')) || [];
-    const foundUser = users.find((user) => user.email === email && user.password === password);
-  
-    if (foundUser) {
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('loggedInUserId', foundUser.id); // Сохраняем id пользователя при входе
-      navigate('/');
-    } else {
-      console.log('Invalid email or password');
-    }
+  const handleSignIn = async () => {
+    signInWithEmailAndPassword(auth, email, password).then(() => navigate('/'))
   };
 
   const handleSignUp = () => {
-    const users = JSON.parse(localStorage.getItem('users')) || [];
-    const existingUser = users.find((user) => user.email === email);
-
-    if (existingUser) {
-      console.log('User with this email already exists');
-    } else {
-      const newUser = { id: generateUniqueId(), email, password };
-      const updatedUsers = [...users, newUser];
-      localStorage.setItem('users', JSON.stringify(updatedUsers));
-      console.log('Sign Up successful:', newUser);
+    try {
+      createUserWithEmailAndPassword(auth, email, password).then(() => navigate('/'));
+    } catch (error) {
+      console.error(error);
     }
   };
 
   const handleSignInWithGoogle = () => {
-    console.log('Sign In with Google');
+      signInWithPopup(auth, googleAuthProvider).then(credentials => setUser(credentials.user)).catch(err => console.log(err))
   };
+
+
+  React.useEffect(() => {
+    if(user)  navigate('/');
+  },[user])
 
   return (
     <div className="login-form-container">
