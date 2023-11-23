@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { auth } from '../firebase';
+
 import '../styles/loginform.css';
 
 const generateUniqueId = () => {
@@ -11,6 +13,14 @@ const generateUniqueId = () => {
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  console.log(auth);
+
+  const [user, setUser] = useState('')
+
+
+  console.log(user);
+
   const navigate = useNavigate();
 
   const handleEmailChange = (e) => {
