@@ -18,7 +18,7 @@ const HomePage = () => {
       <Header />
       <div className="container">
         {/* Поиск по тегам */}
-        <TagInput selectedTags={selectedTags} onTagChange={handleTagChange} showCount={true}/>
+        <TagInput selectedTags={selectedTags} onTagChange={handleTagChange}/>
         {/* Отображение профилей на основе выбранных тегов */}
         <UserProfileList selectedTags={selectedTags} />
       </div>

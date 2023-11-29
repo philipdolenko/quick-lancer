@@ -1,137 +1,211 @@
-// ProfilePage.jsx
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/profile.css';
-import TagInput from '../components/TagInput';
+import TagInput from '../components/ProfileTagInput';
 
 const ProfilePage = () => {
-    const [currentUser, setCurrentUser] = useState(null);
-    const [linkedin, setLinkedin] = useState('');
-    const [avatar, setAvatar] = useState('');
-    const [username, setUsername] = useState('');
-    const [description, setDescription] = useState('');
-    const [hourlyRate, setHourlyRate] = useState('');
-    const [tags, setTags] = useState([]);
+    const [userData, setUserData] = useState({
+        fullName: '',
+        email: '',
+        avatarUrl: '',
+        link: '',
+        price: 0,
+        description: '',
+        tags: [],
+    });
+    const [isEditing, setIsEditing] = useState(false);
+    const navigate = useNavigate();
     const avatarInputRef = useRef(null);
 
-    const navigate = useNavigate();
-
     useEffect(() => {
-        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        const fetchProfileData = async () => {
+            try {
+                const response = await fetch('http://localhost:4444/auth/me', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
 
-        if (isLoggedIn !== 'true') {
-            navigate('/login');
-        } else {
-            const users = JSON.parse(localStorage.getItem('users')) || [];
-            const loggedInUserId = localStorage.getItem('loggedInUserId');
-
-            if (loggedInUserId) {
-                const loggedInUser = users.find((user) => user.id === loggedInUserId);
-
-                if (loggedInUser) {
-                    setCurrentUser(loggedInUser);
-                    setLinkedin(loggedInUser.linkedin || '');
-                    setAvatar(loggedInUser.avatar || '');
-                    setUsername(loggedInUser.username || '');
-                    setDescription(loggedInUser.description || '');
-                    setHourlyRate(loggedInUser.hourlyRate || '');
-                    setTags(loggedInUser.tags || []);
+                if (response.ok) {
+                    const fetchedUserData = await response.json();
+                    setUserData(fetchedUserData);
                 } else {
                     navigate('/login');
                 }
-            } else {
-                navigate('/login');
+            } catch (error) {
+                console.error('Error fetching profile data:', error);
             }
-        }
-    }, [navigate]);
-
-    useEffect(() => {
-        // Сохранение данных профиля при изменении, только если currentUser не null
-        if (currentUser) {
-            const updatedUser = {
-                ...currentUser,
-                linkedin,
-                avatar,
-                username,
-                description,
-                hourlyRate,
-                tags,
-            };
-
-            const users = JSON.parse(localStorage.getItem('users')) || [];
-            const updatedUsers = users.map((user) => (user.id === currentUser.id ? updatedUser : user));
-            localStorage.setItem('users', JSON.stringify(updatedUsers));
-            console.log('Profile saved:', updatedUser);
-        }
-    }, [currentUser, linkedin, avatar, username, description, hourlyRate, tags]);
-
-    const handleAvatarChange = (e) => {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-
-        reader.onloadend = () => {
-            setAvatar(reader.result);
         };
 
-        if (file) {
-            reader.readAsDataURL(file);
+        fetchProfileData();
+    }, [navigate]);
+
+    const handleEditClick = () => {
+        setIsEditing(true);
+    };
+
+    const handleSaveClick = async () => {
+        try {
+            const response = await fetch('http://localhost:4444/auth/me', {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData),
+            });
+
+            if (response.ok) {
+                setIsEditing(false);
+                console.log('Profile saved successfully');
+            } else {
+                console.error('Error saving profile');
+            }
+        } catch (error) {
+            console.error('Error saving profile:', error);
         }
     };
 
-    const handleDeleteAvatar = () => {
-        setAvatar('');
+    const handleCancelClick = () => {
+        setIsEditing(false);
+    };
+
+    const handleChange = (e, field) => {
+        const { value } = e.target;
+        setUserData((prevData) => ({
+            ...prevData,
+            [field]: value,
+        }));
     };
 
     return (
         <div className='profile-container'>
+            {/* Блок с вводом ссылки */}
             <div className='link-field-background'>
-                <input className='link-field' type="text" value={linkedin} onChange={(e) => setLinkedin(e.target.value)} />
-            </div>
-            <div className='profile-info'>
-                <div className="avatar-container">
-                    <label htmlFor="avatar-input" className="avatar-image">
-                        {avatar && (
-                            <>
-                                <span className="delete-avatar" onClick={handleDeleteAvatar}>
-                                    ✕
-                                </span>
-                                <img src={avatar} alt="Avatar" />
-                            </>
-                        )}
-                        {!avatar && <span onClick={() => avatarInputRef.current.click()}>+</span>}
-                    </label>
+                {isEditing ? (
                     <input
-                        type="file"
-                        id="avatar-input"
-                        accept="image/*"
-                        className="avatar-input"
-                        onChange={handleAvatarChange}
-                        ref={avatarInputRef}
-                        style={{ display: 'none' }}
+                        className='link-field'
+                        type="text"
+                        value={userData.link}
+                        onChange={(e) => handleChange(e, 'link')}
+                        placeholder='Enter your link...'
                     />
+                ) : (
+                    <div className='link-info'>{userData.link}</div>
+                )}
+            </div>
+
+            <div className='profile-info'>
+                <div className='avatar-container'>
+                    {isEditing ? (
+                        <label htmlFor="avatar-input" className="avatar-image">
+                            {userData.avatarUrl && (
+                                <>
+                                    <span className="delete-avatar" onClick={() => setUserData({ ...userData, avatarUrl: '' })}>
+                                        ✕
+                                    </span>
+                                    <img src={userData.avatarUrl} alt="Avatar" />
+                                </>
+                            )}
+                            {!userData.avatarUrl && <span onClick={() => avatarInputRef.current.click()}>+</span>}
+                        </label>
+                    ) : (
+                        <label htmlFor="avatar-input" className="avatar-image">
+                            <>
+                                <img src={userData.avatarUrl} alt="" />
+                            </>
+                        </label>
+                    )}
+                    {isEditing && (
+                        <input
+                            type="file"
+                            id="avatar-input"
+                            accept="image/*"
+                            className="avatar-input"
+                            onChange={(e) => {
+                                const file = e.target.files[0];
+                                const reader = new FileReader();
+
+                                reader.addEventListener('loadend', () => {
+                                    setUserData({ ...userData, avatarUrl: reader.result });
+                                });
+                                if (file) {
+                                    reader.readAsDataURL(file);
+                                }
+                            }}
+                            ref={avatarInputRef}
+                            style={{ display: 'none' }}
+                        />
+                    )}
                 </div>
                 <div className='profile-about-info'>
                     <div className='username-profile-about-info-background'>
-                        <input className='username-profile-info' type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
+                        <input
+                            className='username-profile-info'
+                            type="text"
+                            value={userData.fullName}
+                            onChange={(e) => handleChange(e, 'fullName')}
+                        />
                     </div>
                     <div className='description-profile-about-info-background'>
-                        <textarea className='description-profile-info' value={description} onChange={(e) => setDescription(e.target.value)} />
+                        {isEditing ? (
+                            <textarea
+                                className='description-profile-info'
+                                name='description'
+                                value={userData.description}
+                                onChange={(e) => handleChange(e, 'description')}
+                                placeholder='Enter your description...'
+                            />
+                        ) : (
+                            <div className='description-profile-info'>{userData.description}</div>
+                        )}
                     </div>
                 </div>
                 <div className='price-per-hour'>
-                    <div className='price-per-hour-info-background'>
-                        <input className='price-per-hour-info' type="text" value={hourlyRate} onChange={(e) => setHourlyRate(e.target.value)} />
-                    </div>
-                    <span className='hour-info'>
-                        <span className='dollar-sign'>$/</span>hour
-                    </span>
+                    {isEditing ? (
+                        <>
+                            <div className='price-per-hour-info-background'>
+                                <input
+                                    className='price-per-hour-info'
+                                    type='number'
+                                    name='price'
+                                    value={userData.price}
+                                    onChange={(e) => handleChange(e, 'price')}
+                                />
+                            </div>
+                            <span className='hour-info'>$/hour</span>
+                        </>
+                    ) : (
+                        <div className='price-per-hour-info'>{`$${userData.price != null ? userData.price : 0}/hour`}</div>
+                    )}
                 </div>
+                {isEditing && (
+                    <div className='buttons'>
+                        <button className='save-profile-button' onClick={handleSaveClick}>
+                            Save
+                        </button>
+                        <button className='cancel-profile-button' onClick={handleCancelClick}>
+                            Cancel
+                        </button>
+                    </div>
+                )} :
+                <button className='edit-profile-button' onClick={handleEditClick}>
+                    Edit Profile
+                </button>
             </div>
-            <div className='profile-taginput'>
-                <TagInput  selectedTags={tags} onTagChange={(newTags) => setTags(newTags)} showCount={false} />
-            </div>
-            
+
+            {/* Блок с вводом тегов */}
+            {isEditing && (
+                <div className='tag-input-container'>
+                    <TagInput
+                        selectedTags={userData.tags}
+                        onTagChange={(newTags) => setUserData((prevData) => ({ ...prevData, tags: newTags }))}
+                        showCount={false}
+                    />
+                </div>
+            )}
         </div>
     );
 };

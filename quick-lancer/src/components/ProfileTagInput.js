@@ -6,45 +6,26 @@ import '../styles/taginput.css';
 const TagInput = ({ selectedTags, onTagChange, showCount }) => {
   const [inputValue, setInputValue] = useState('');
   const [suggestions, setSuggestions] = useState([]);
+ 
 
   useEffect(() => {
     setInputValue('');
     setSuggestions([]);
   }, [selectedTags]);
 
-  const handleInputChange = async (e) => {
+  const handleInputChange = (e) => {
     const value = e.target.value;
     setInputValue(value);
 
-    try {
-      const response = await fetch(`http://localhost:4444/users/tags`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
-          'Content-Type': 'application/json',
-        },
-      });
 
-      if (response.ok) {
-        const tagCounts = await response.json();
+    const filteredSuggestions =
+      value.trim() !== '' && Array.isArray(tagsData)
+        ? tagsData
+            .filter((tag) => tag.toLowerCase().includes(value.toLowerCase()))
+            .map((tag) => ({tag}))
+        : [];
 
-        const filteredSuggestions =
-        value.trim() !== '' && Array.isArray(tagsData)
-          ? tagsData
-              .filter((tag) => tag.toLowerCase().includes(value.toLowerCase()))
-              .map((tag) => {
-                const foundTag = tagCounts.find((countObj) => countObj.tag.toLowerCase() === tag.toLowerCase());
-                return { tag, count: foundTag ? foundTag.count : 0 };
-              })
-          : [];
-
-        setSuggestions(filteredSuggestions);
-      } else {
-        console.error('Error fetching tag suggestions');
-      }
-    } catch (error) {
-      console.error('Error fetching tag suggestions:', error);
-    }
+    setSuggestions(filteredSuggestions);
   };
 
   const handleTagSelect = (tag) => {
@@ -90,7 +71,7 @@ const TagInput = ({ selectedTags, onTagChange, showCount }) => {
           {suggestions.map((item, index) => (
             <li key={index} onClick={() => handleTagSelect(item.tag)}>
               <div className="suggestion-tag">{item.tag}</div>
-              <div className="suggestion-count">{item.count}</div>
+              {showCount ? <div className="suggestion-count">{item.count}</div> : null }
             </li>
           ))}
         </ul>

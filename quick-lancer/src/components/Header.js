@@ -13,6 +13,7 @@ const Header = () => {
     }, []);
     const handleLogout = () => {
         localStorage.setItem('isLoggedIn', 'false');
+        localStorage.removeItem('authToken');
     };
     const rendersLink = () => {
         if (location.pathname === '/') {

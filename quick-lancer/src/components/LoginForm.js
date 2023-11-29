@@ -1,15 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth, googleAuthProvider } from '../firebase';
-
 import '../styles/loginform.css';
-import { signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword} from 'firebase/auth';
-
-const generateUniqueId = () => {
-  // Вам нужно реализовать эту функцию, используя, например, библиотеку uuid.
-  // В данном примере, просто возвращаем текущую метку времени
-  return Date.now().toString();
-};
+// import { auth, googleAuthProvider } from '../firebase';
+// import { signInWithPopup} from 'firebase/auth';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -28,25 +21,79 @@ const LoginForm = () => {
   };
 
   const handleSignIn = async () => {
-    signInWithEmailAndPassword(auth, email, password).then(() => navigate('/'))
-  };
-
-  const handleSignUp = () => {
     try {
-      createUserWithEmailAndPassword(auth, email, password).then(() => navigate('/'));
+      const response = await fetch('http://localhost:4444/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
+  
+      if (response.ok) {
+        // Логин прошел успешно
+        const token = await response.json();
+        // Сохранение токена в localStorage
+        localStorage.setItem('authToken', token);
+
+        localStorage.setItem('isLoggedIn', 'true');
+        // Обновление состояния пользователя
+        setUser(token);
+      } else {
+        // Обработка ошибки при логине
+        const error = await response.json();
+        console.error(error);
+      }
     } catch (error) {
-      console.error(error);
+      console.error('Error during login:', error);
     }
   };
+  
+  const handleSignUp = async () => {
+    try {
+      const response = await fetch('http://localhost:4444/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+          // Другие поля, если они необходимы
+        }),
+      });
+  
+      if (response.ok) {
+        // Регистрация прошла успешно
+        const token = await response.json();
+        // Сохранение токена в localStorage
+        localStorage.setItem('authToken', token);
+
+        localStorage.setItem('isLoggedIn', 'true');
+        // Обновление состояния пользователя
+        setUser(token);
+      } else {
+        // Обработка ошибки при регистрации
+        const error = await response.json();
+        console.error(error);
+      }
+    } catch (error) {
+      console.error('Error during registration:', error);
+    }
+  };
+  
 
   const handleSignInWithGoogle = () => {
-      signInWithPopup(auth, googleAuthProvider).then(credentials => setUser(credentials.user)).catch(err => console.log(err))
+    // signInWithPopup(auth, googleAuthProvider).then(credentials => setUser(credentials.user)).catch(err => console.log(err))
   };
 
 
   React.useEffect(() => {
     if(user)  navigate('/');
-  },[user])
+  },[navigate, user])
 
   return (
     <div className="login-form-container">
