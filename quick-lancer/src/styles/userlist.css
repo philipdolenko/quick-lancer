@@ -4,7 +4,30 @@
   flex-direction: column;
   align-items: center;
 }
-
+.user-profile-list .username-profile-info{
+  border: none;
+  padding: 7px;
+  background-color: transparent;
+}
+.user-profile-list .description-profile-info{
+  border: none;
+  background-color: transparent;
+}
+.user-profile-list p {
+  color: #868686;
+  line-height: normal;
+  font: 700 15px / normal sans-serif;
+}
+.user-profile .selected-tag{
+    padding: 10px 15px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    border: 1px solid #000;
+    font: 400 20px / normal sans-serif;
+}
+.user-profile .selected-tag:hover{
+   background-color: transparent;
+}
 .user-profile {
   display: flex;
   align-items: center;
@@ -78,5 +101,3 @@
   font-weight: 700;
   line-height: normal;
 }
-
-

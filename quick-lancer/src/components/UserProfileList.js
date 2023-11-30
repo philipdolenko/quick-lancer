@@ -1,6 +1,7 @@
 // components/UserProfileList.js
 import React, { useState, useEffect } from 'react';
 import '../styles/userlist.css';
+import { Link } from 'react-router-dom';
 
 const UserProfileList = ({ selectedTags }) => {
   const [filteredProfiles, setFilteredProfiles] = useState([]);
@@ -27,14 +28,11 @@ const UserProfileList = ({ selectedTags }) => {
 
         if (response.ok) {
           const users = await response.json();
-          console.log('Filtered Users:', users);
           setFilteredProfiles(users);
         } else {
-          console.error('Error fetching filtered profiles:', response);
           setError('Error fetching filtered profiles');
         }
       } catch (error) {
-        console.error('Error fetching filtered profiles:', error);
         setError('Error fetching filtered profiles');
       } finally {
         setLoading(false);
@@ -55,10 +53,22 @@ const UserProfileList = ({ selectedTags }) => {
   return (
     <div className="user-profile-list">
       {filteredProfiles.map((user) => (
-        <div key={user._id} className="user-profile">
-          <h3>{user.email}</h3>
-          <p>Tags: {user.tags.join(', ')}</p>
-        </div>
+        <Link key={user._id} to={user.link} target="_blank" className="user-profile">
+          <div className='avatar-container'>
+            <label htmlFor="avatar-input" className="avatar-image">
+              <>
+                <img src={user.avatarUrl} alt="" />
+              </>
+            </label>
+          </div>
+          <div className='profile-about-info'>
+            <div className='username-profile-info'>{user.fullName}</div>
+            <div className='description-profile-info'>{user.description}</div>
+          </div>
+          <div className='price-per-hour'>
+            <div className='price-per-hour-info'>{`$${user.price}/hour`}</div>
+          </div>
+        </Link>
       ))}
       {selectedTags.length === 0 && (
         <p>No tags selected. Please add tags to see filtered users.</p>

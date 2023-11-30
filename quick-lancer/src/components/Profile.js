@@ -93,7 +93,7 @@ const ProfilePage = () => {
                         placeholder='Enter your link...'
                     />
                 ) : (
-                    <div className='link-info'>{userData.link}</div>
+                    <div className='link-field'>{userData.link}</div>
                 )}
             </div>
 
@@ -112,7 +112,7 @@ const ProfilePage = () => {
                             {!userData.avatarUrl && <span onClick={() => avatarInputRef.current.click()}>+</span>}
                         </label>
                     ) : (
-                        <label htmlFor="avatar-input" className="avatar-image">
+                        <label htmlFor="avatar-input" className="avatar-image" style={{ 'cursor': 'default' }}>
                             <>
                                 <img src={userData.avatarUrl} alt="" />
                             </>
@@ -142,12 +142,17 @@ const ProfilePage = () => {
                 </div>
                 <div className='profile-about-info'>
                     <div className='username-profile-about-info-background'>
-                        <input
-                            className='username-profile-info'
-                            type="text"
-                            value={userData.fullName}
-                            onChange={(e) => handleChange(e, 'fullName')}
-                        />
+                        {isEditing ? (
+                            <input
+                                className='username-profile-info'
+                                type="text"
+                                value={userData.fullName}
+                                onChange={(e) => handleChange(e, 'fullName')}
+                            />
+                        ) : (
+                            <div className='username-profile-info'>{userData.fullName}</div>
+                        )}
+
                     </div>
                     <div className='description-profile-about-info-background'>
                         {isEditing ? (
@@ -181,21 +186,36 @@ const ProfilePage = () => {
                         <div className='price-per-hour-info'>{`$${userData.price != null ? userData.price : 0}/hour`}</div>
                     )}
                 </div>
-                {isEditing && (
-                    <div className='buttons'>
-                        <button className='save-profile-button' onClick={handleSaveClick}>
-                            Save
+                <div className='profile-edit-group'>
+                    {isEditing ? (
+                        <div className='buttons'>
+                            <button className='save-profile-button' onClick={handleSaveClick}>
+                                Save
+                            </button>
+                            <button className='cancel-profile-button' onClick={handleCancelClick}>
+                                Cancel
+                            </button>
+                        </div>
+                    ) : (
+                        <button className='edit-profile-button' onClick={handleEditClick}>
+                            Edit Profile
                         </button>
-                        <button className='cancel-profile-button' onClick={handleCancelClick}>
-                            Cancel
-                        </button>
-                    </div>
-                )} :
-                <button className='edit-profile-button' onClick={handleEditClick}>
-                    Edit Profile
-                </button>
-            </div>
+                    )}
 
+                </div>
+            </div>
+            
+            {!isEditing && (
+                <div className='selected-profile-tag'>
+                    <div className='selected-tag-container'>
+                        {userData.tags.map((tag, index) => (
+                            <div key={index} className='selected-tag'>
+                                {tag}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
             {/* Блок с вводом тегов */}
             {isEditing && (
                 <div className='tag-input-container'>
